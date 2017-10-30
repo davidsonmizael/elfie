@@ -53,7 +53,8 @@ JOYSTICK = {
 
 
 def detect_joystick():
-    sys.stdout.write('joysticks: {}\n'.format(str(pygame.joystick.get_count())))
+    sys.stdout.write('joysticks: {}\n'.format(
+        str(pygame.joystick.get_count())))
     if pygame.joystick.get_count() > 0:
         j = pygame.joystick.Joystick(0)
         j.init()
@@ -90,14 +91,14 @@ def redraw_screen(screen, roll, pitch, throttle, yaw,
         pressed = []
 
     state = {
-        'throttle_u': int((throttle+1)/2.0*100),
-        'throttle_d': int((1-(throttle+1)/2.0)*100),
-        'yaw_r': int((yaw+1)/2.0*100),
-        'yaw_l': int((1-(yaw+1)/2.0)*100),
-        'pitch_u': int((pitch+1)/2.0*100),
-        'pitch_d': int((1-(pitch+1)/2.0)*100),
-        'roll_r': int((roll+1)/2.0*100),
-        'roll_l': int((1-(roll+1)/2.0)*100),
+        'throttle_u': int((throttle + 1) / 2.0 * 100),
+        'throttle_d': int((1 - (throttle + 1) / 2.0) * 100),
+        'yaw_r': int((yaw + 1) / 2.0 * 100),
+        'yaw_l': int((1 - (yaw + 1) / 2.0) * 100),
+        'pitch_u': int((pitch + 1) / 2.0 * 100),
+        'pitch_d': int((1 - (pitch + 1) / 2.0) * 100),
+        'roll_r': int((roll + 1) / 2.0 * 100),
+        'roll_l': int((1 - (roll + 1) / 2.0) * 100),
         'unixtime': time.time(),
         'hex_command': drone_command.encode('hex'),
         'pressed_keys': str(pressed),
@@ -139,8 +140,22 @@ def parse_joystick_input(joystick):
     if 'BTN_R1' in pressed or 'BTN_R2' in pressed:
         commands.add('force')
 
-    return roll, pitch, throttle, yaw, commands, pressed
+    return roll, pitch, throttle, yaw, commands, pressed 
 
+
+def start_simple_fly():
+    throttle = 0
+    yaw = 0
+    pitch = 0
+    roll = 0
+    commands = set()
+    pressed = set()
+
+    commands.add('sping up')
+    commands.add('force')
+    commands.add('')
+
+    return roll, pitch, throttle, yaw, commands, pressed
 
 DEBUG = True
 if DEBUG:
@@ -158,7 +173,8 @@ def main_loop(drone1, screen=None, kbd=None, joystick=None):
         sys.exit(1)
     try:
         while 1:
-            roll, pitch, throttle, yaw, commands, pressed = parse_joystick_input(joystick)
+            #roll, pitch, throttle, yaw, commands, pressed = parse_joystick_input(joystick)
+            roll, pitch, throttle, yaw, commands, pressed = start_simple_fly()
 
             max_power = 1.0 if 'force' in commands else MAX_POWER
 
@@ -199,7 +215,7 @@ def main_loop(drone1, screen=None, kbd=None, joystick=None):
 if __name__ == "__main__":
     drone1 = drone.Drone()
     pygame.init()
-    pygame.joystick.init()
+    #pygame.joystick.init()
     # if you are running script without TTY, don't install curses in virtualenv
     screen = init_screen() if curses else None
     kbd = None
